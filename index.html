@@ -70,9 +70,9 @@
           <!-- Sidebar Navidation Menus-->
           <ul class="list-unstyled">
             <li class="active"><a href="index.html"> <i class="icon-home"></i>Inicio </a></li>
-            <li><a href="tables.html"> <i class="icon-grid"></i>Fixture </a></li>
-            <li><a href="jugadores.html"> <i class="fa fa-bar-chart"></i>Jugadores </a></li>
-            <li><a href="forms.html"> <i class="icon-padnote"></i>Estadísticas </a></li>
+            <li><a href="fixture.html"> <i class="icon-line-chart"></i>Posiciones </a></li>
+            <li><a href="jugadores.html"> <i class="icon-user"></i>Jugadores </a></li>
+            <li><a href="historial.html"> <i class="icon-clock"></i>Historial </a></li>
             <li><a href="login.html"> <i class="icon-interface-windows"></i>Noticias </a></li>
 
         </nav>
@@ -80,9 +80,32 @@
           <!-- Page Header-->
           <header class="page-header">
             <div class="container-fluid">
-              <h2 class="no-margin-bottom">Bienvenido Juanse!</h2>
+                <p style="text-align: right" id="clockDisplay" onload="displayDate()">                          
+                </p>
+                <h2 class="no-margin-bottom" style="text-align: left">Bienvenido!</h2>
             </div>
           </header>
+              <script>
+                  function renderTime(){               
+                  // Date
+                  var mydate = new Date();                  
+                  var year = mydate.getYear();                  
+                  if(year < 1000){
+                    year += 1900
+                    }
+                  var day = mydate.getDay();
+                  var month = mydate.getMonth();
+                  var daym = mydate.getDate();
+                  var dayarray = new Array("Domingo","Lunes","Martes","Miércoles","Jueves", "Viernes", "Sábado");                  
+                  var montharray = new Array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");                    
+                  var myClock = document.getElementById("clockDisplay");
+                  
+                  myClock.textContent = "" +dayarray[day]+ " " +daym+ " de " +montharray[month]+ " del " +year;
+                    myClock.innerText = "" +dayarray[day]+ " " +daym+ " de " +montharray[month]+ " del " +year;                    
+                    setTimeout("renderTime()", 1000);
+                  }
+                  renderTime();
+                </script>
           <!-- Dashboard Counts Section-->
           <section class="dashboard-counts no-padding-bottom">
             <div class="container-fluid">
@@ -141,110 +164,65 @@
 
           <!-- Seccion Partidos-->
           <section class="projects">
-            <div class="container-fluid"><h1>Próximos partidos</h1>
-              <!-- Project-->
-              <div class="project">
-                <div class="row bg-white has-shadow">
-                  <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
-                    <div class="project-title d-flex align-items-center">
-                      <div class="image has-shadow"><img src="https://urba.org.ar/wp-content/uploads/2019/02/Delta-Rugby-Club-128x128.png" alt="..." class="img-fluid" height="100%"></div>
-                      <div class="text">
-                        <h1 class="h1">Delta</h1><small>Local - Fecha 1</small>
-                      </div>
-                    </div>
-                    <div class="project-date"><span class="hidden-sm-down">Sábado 26/12</span></div>
-                  </div>
-                  <div class="right-col col-lg-6 d-flex align-items-center">
-                    <div class="time"><i class="fa fa-clock-o"></i>15:30 PM </div>
-                    <div class="comments"><i ></i>Pos 4</div>
-                    <div class="badge badge-rounded bg-green">G </div>
-                    <div class="badge badge-rounded bg-red">P  </div>
-                    <div class="badge badge-rounded bg-red">P</div>
-                    <div class="card-body text-right">
-                        <button type="button" data-toggle="modal" data-target="#myModal" href="www.google.com" class="btn btn-primary">Cómo llegar </button>
+            <div class="container-fluid " id="proxPartidos"><h1>Próximos partidos</h1>              
 
-                    </div>
-                  </div>
-                </div>
-              </div>
-               <!-- Project-->
-               <div class="project">
-                  <div class="row bg-white has-shadow">
+            </div>
+           </section>
+           <script>
+              fetch('https://sheets.googleapis.com/v4/spreadsheets/1-9tyNvA8-Ivljzc51vyreICXcBlC5CNlQbIvblE6isU/values/Fixture?key=AIzaSyBxsg2Lc5hhaNAhS9VwiB39m0nj5OgAlbs')
+              .then((res)=>{
+                  console.log(res);   
+                  return res.json();    
+              })
+              .then((data)=>{
+                  console.log(data.values)
+                  proxpartidos = data.values
+                  console.log(proxpartidos[1][0]) 
+              })
+            .then((post1)=>{
+                var con = 0
+                for (let index=1;index<4; index++){
+                    document.getElementById("proxPartidos").innerHTML+=`
+                <div class="project">
+                  <div class="row bg-white has-shadow rounded">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
-                      <div class="project-title d-flex align-items-center">
-                        <div class="image has-shadow"><img src="https://urba.org.ar/wp-content/uploads/2019/02/Daom.png
-                          " alt="..." class="img-fluid"></div>
-                        <div class="text">
-                          <h1 class="h1">DAOM</h1><small>Local - Fecha 2</small>
-                        </div>
-                      </div>
-                      <div class="project-date"><span class="hidden-sm-down">Sábado 26/12</span></div>
+                          <div class="project-title d-flex align-items-center">
+                            <div class="image has-shadow"><img src="${proxpartidos[index][6]}" alt="..." class="img-fluid" height="100%"></div>
+                            <div class="text">
+                              <h1 class="h1">${proxpartidos[index][3]}</h1><small>${proxpartidos[index][4]} - Fecha ${proxpartidos[index][0]}</small>
+                            </div>
+                          </div>
+                    <div class="project-date"><span class="hidden-sm-down">${proxpartidos[index][1]} ${proxpartidos[index][2]}</span></div>
                     </div>
-                    <div class="right-col col-lg-6 d-flex align-items-center">
-                      <div class="time"><i class="fa fa-clock-o"></i>15:30 PM </div>
-                      <div class="comments"><i ></i>Pos 4</div>
-                      <div class="badge badge-rounded bg-green">G </div>
-                      <div class="badge badge-rounded bg-red">P  </div>
-                      <div class="badge badge-rounded bg-red">P</div>
-                      <div class="card-body text-right">
-                          <button type="button" data-toggle="modal" data-target="#myModal" href="www.google.com" class="btn btn-primary">Cómo llegar </button>
-  
+                      <div class="right-col col-lg-6 d-flex align-items-center">
+                        <div class="time"><i class="fa fa-clock-o"></i>15:30 PM </div>
+                        <div class="comments"><i ></i>Pos ${proxpartidos[index][5]}</div>
+                        <div class="badge badge-rounded bg-green">G </div>
+                        <div class="badge badge-rounded bg-red">P  </div>
+                        <div class="badge badge-rounded bg-red">P</div>
+                        <div class="card-body text-right">
+                            <button type="button" data-toggle="modal" data-target="#myModal" href="www.google.com" class="btn btn-primary">Cómo llegar </button>
                       </div>
                     </div>
                   </div>
-                </div>
-                 <!-- Project-->
-              <div class="project">
-                  <div class="row bg-white has-shadow">
-                    <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
-                      <div class="project-title d-flex align-items-center">
-                        <div class="image has-shadow"><img src="img/project-1.jpg" alt="..." class="img-fluid"></div>
-                        <div class="text">
-                          <h1 class="h1">Areco Rugby</h1><small>Local - Fecha 2</small>
-                        </div>
-                      </div>
-                      <div class="project-date"><span class="hidden-sm-down">Sábado 26/12</span></div>
-                    </div>
-                    <div class="right-col col-lg-6 d-flex align-items-center">
-                      <div class="time"><i class="fa fa-clock-o"></i>15:30 PM </div>
-                      <div class="comments"><i ></i>Pos 4</div>
-                      <div class="badge badge-rounded bg-green">G </div>
-                      <div class="badge badge-rounded bg-red">P  </div>
-                      <div class="badge badge-rounded bg-red">P</div>
-                      <div class="card-body text-right">
-                          <button type="button" data-toggle="modal" data-target="#myModal" href="www.google.com" class="btn btn-primary">Cómo llegar </button>
-  
-                      </div>
-                    </div>
-                  </div>
-                </div>
-               <!-- Project-->
-               <div class="project">
-                  <div class="row bg-white has-shadow">
-                    <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
-                      <div class="project-title d-flex align-items-center">
-                        <div class="image has-shadow"><img src="img/project-1.jpg" alt="..." class="img-fluid"></div>
-                        <div class="text">
-                          <h1 class="h1">Areco Rugby</h1><small>Local - Fecha 2</small>
-                        </div>
-                      </div>
-                      <div class="project-date"><span class="hidden-sm-down">Sábado 26/12</span></div>
-                    </div>
-                    <div class="right-col col-lg-6 d-flex align-items-center">
-                      <div class="time"><i class="fa fa-clock-o"></i>15:30 PM </div>
-                      <div class="comments"><i ></i>Pos 4</div>
-                      <div class="badge badge-rounded bg-green">G </div>
-                      <div class="badge badge-rounded bg-red">P  </div>
-                      <div class="badge badge-rounded bg-red">P</div>
-                      <div class="card-body text-right">
-                          <button type="button" data-toggle="modal" data-target="#myModal" href="www.google.com" class="btn btn-primary">Cómo llegar </button>
-  
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 </div>
+                    `
+               con=con+1;            
+                }
+            })
+            .catch(function(error){
+                console.log(JSON.stringify(error));
+            })    
+             
+           </script>  
 
-          </section>
+
+
+
+
+
+
+
           <!-- Sección Videos  -->
 
           <section>
@@ -255,390 +233,104 @@
             </div>
 
           </section>
-           <!-- Dashboard Header Section    -->
-           <section class="dashboard-header">
-              <div class="container-fluid"><strong>Dashboard</strong>
-                <div class="row">
-                  <!-- Statistics -->
-                  <div class="statistics col-lg-3 col-12">
-                    <div class="statistic d-flex align-items-center bg-white has-shadow">
-                      <div class="icon bg-red"><i class="fa fa-tasks"></i></div>
-                      <div class="text"><strong>234</strong><br><small>Applications</small></div>
-                    </div>
-                    <div class="statistic d-flex align-items-center bg-white has-shadow">
-                      <div class="icon bg-green"><i class="fa fa-calendar-o"></i></div>
-                      <div class="text"><strong>152</strong><br><small>Interviews</small></div>
-                    </div>
-                    <div class="statistic d-flex align-items-center bg-white has-shadow">
-                      <div class="icon bg-orange"><i class="fa fa-paper-plane-o"></i></div>
-                      <div class="text"><strong>147</strong><br><small>Forwards</small></div>
-                    </div>
-                  </div>
-                  <!-- Line Chart            -->
-                  <div class="chart col-lg-6 col-12">
-                    <div class="line-chart bg-white d-flex align-items-center justify-content-center has-shadow">
-                      <canvas id="lineCahrt"></canvas>
-                    </div>
-                  </div>
-                  <div class="chart col-lg-3 col-12">
-                    <!-- Bar Chart   -->
-                    <div class="bar-chart has-shadow bg-white">
-                      <div class="title"><strong class="text-violet">95%</strong><br><small>Current Server Uptime</small></div>
-                      <canvas id="barChartHome"></canvas>
-                    </div>
-                    <!-- Numbers-->
-                    <div class="statistic d-flex align-items-center bg-white has-shadow">
-                      <div class="icon bg-green"><i class="fa fa-line-chart"></i></div>
-                      <div class="text"><strong>99.9%</strong><br><small>Success Rate</small></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>         
-          <!-- Client Section-->
-          <section class="client no-padding-top">
-            <div class="container-fluid">
-              <div class="row">
-                <!-- Work Amount  -->
-                <div class="col-lg-4">
-                  <div class="work-amount card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-body">
-                      <h3>Work Hours</h3><small>Lorem ipsum dolor sit amet.</small>
-                      <div class="chart text-center">
-                        <div class="text"><strong>90</strong><br><span>Hours</span></div>
-                        <canvas id="pieChart"></canvas>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Client Profile -->
-                <div class="col-lg-4">
-                  <div class="client card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard2" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-body text-center">
-                      <div class="client-avatar"><img src="img/avatar-2.jpg" alt="..." class="img-fluid rounded-circle">
-                        <div class="status bg-green"></div>
-                      </div>
-                      <div class="client-title">
-                        <h3>Jason Doe</h3><span>Web Developer</span><a href="#">Follow</a>
-                      </div>
-                      <div class="client-info">
-                        <div class="row">
-                          <div class="col-4"><strong>20</strong><br><small>Photos</small></div>
-                          <div class="col-4"><strong>54</strong><br><small>Videos</small></div>
-                          <div class="col-4"><strong>235</strong><br><small>Tasks</small></div>
-                        </div>
-                      </div>
-                      <div class="client-social d-flex justify-content-between"><a href="#" target="_blank"><i class="fa fa-facebook"></i></a><a href="#" target="_blank"><i class="fa fa-twitter"></i></a><a href="#" target="_blank"><i class="fa fa-google-plus"></i></a><a href="#" target="_blank"><i class="fa fa-instagram"></i></a><a href="#" target="_blank"><i class="fa fa-linkedin"></i></a></div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Total Overdue             -->
-                <div class="col-lg-4">
-                  <div class="overdue card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard3" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-body">
-                      <h3>Total Overdue</h3><small>Lorem ipsum dolor sit amet.</small>
-                      <div class="number text-center">$20,000</div>
-                      <div class="chart">
-                        <canvas id="lineChart1">                               </canvas>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!-- Feeds Section-->
-          <section class="feeds no-padding-top">
-            <div class="container-fluid">
-              <div class="row">
-                <!-- Trending Articles-->
-                <div class="col-lg-6">
-                  <div class="articles card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard4" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-header d-flex align-items-center">
-                      <h2 class="h3">Trending Articles   </h2>
-                      <div class="badge badge-rounded bg-green">4 New       </div>
-                    </div>
-                    <div class="card-body no-padding">
-                      <div class="item d-flex align-items-center">
-                        <div class="image"><img src="img/avatar-1.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                        <div class="text"><a href="#">
-                            <h3 class="h5">Lorem Ipsum Dolor</h3></a><small>Posted on 5th June 2017 by Aria Smith.   </small></div>
-                      </div>
-                      <div class="item d-flex align-items-center">
-                        <div class="image"><img src="img/avatar-2.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                        <div class="text"><a href="#">
-                            <h3 class="h5">Lorem Ipsum Dolor</h3></a><small>Posted on 5th June 2017 by Frank Williams.   </small></div>
-                      </div>
-                      <div class="item d-flex align-items-center">
-                        <div class="image"><img src="img/avatar-3.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                        <div class="text"><a href="#">
-                            <h3 class="h5">Lorem Ipsum Dolor</h3></a><small>Posted on 5th June 2017 by Ashley Wood.   </small></div>
-                      </div>
-                      <div class="item d-flex align-items-center">
-                        <div class="image"><img src="img/avatar-4.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                        <div class="text"><a href="#">
-                            <h3 class="h5">Lorem Ipsum Dolor</h3></a><small>Posted on 5th June 2017 by Jason Doe.   </small></div>
-                      </div>
-                      <div class="item d-flex align-items-center">
-                        <div class="image"><img src="img/avatar-5.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                        <div class="text"><a href="#">
-                            <h3 class="h5">Lorem Ipsum Dolor</h3></a><small>Posted on 5th June 2017 by Sam Martinez.   </small></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Check List -->
-                <div class="col-lg-6">
-                  <div class="checklist card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard5" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-header d-flex align-items-center">           
-                      <h2 class="h3">To Do List </h2>
-                    </div>
-                    <div class="card-body no-padding">
-                      <div class="item d-flex">
-                        <input type="checkbox" id="input-1" name="input-1" class="checkbox-template">
-                        <label for="input-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</label>
-                      </div>
-                      <div class="item d-flex">
-                        <input type="checkbox" id="input-2" name="input-2" class="checkbox-template">
-                        <label for="input-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</label>
-                      </div>
-                      <div class="item d-flex">
-                        <input type="checkbox" id="input-3" name="input-3" class="checkbox-template">
-                        <label for="input-3">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</label>
-                      </div>
-                      <div class="item d-flex">
-                        <input type="checkbox" id="input-4" name="input-4" class="checkbox-template">
-                        <label for="input-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</label>
-                      </div>
-                      <div class="item d-flex">
-                        <input type="checkbox" id="input-5" name="input-5" class="checkbox-template">
-                        <label for="input-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</label>
-                      </div>
-                      <div class="item d-flex">
-                        <input type="checkbox" id="input-6" name="input-6" class="checkbox-template">
-                        <label for="input-6">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!-- Updates Section                                                -->
-          <section class="updates no-padding-top">
-            <div class="container-fluid">
-              <div class="row">
-                <!-- Recent Updates-->
-                <div class="col-lg-4">
-                  <div class="recent-updates card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard6" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard6" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-header">
-                      <h3 class="h4">Recent Updates</h3>
-                    </div>
-                    <div class="card-body no-padding">
-                      <!-- Item-->
-                      <div class="item d-flex justify-content-between">
-                        <div class="info d-flex">
-                          <div class="icon"><i class="icon-rss-feed"></i></div>
-                          <div class="title">
-                            <h5>Lorem ipsum dolor sit amet.</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed.</p>
-                          </div>
-                        </div>
-                        <div class="date text-right"><strong>24</strong><span>May</span></div>
-                      </div>
-                      <!-- Item-->
-                      <div class="item d-flex justify-content-between">
-                        <div class="info d-flex">
-                          <div class="icon"><i class="icon-rss-feed"></i></div>
-                          <div class="title">
-                            <h5>Lorem ipsum dolor sit amet.</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed.</p>
-                          </div>
-                        </div>
-                        <div class="date text-right"><strong>24</strong><span>May</span></div>
-                      </div>
-                      <!-- Item        -->
-                      <div class="item d-flex justify-content-between">
-                        <div class="info d-flex">
-                          <div class="icon"><i class="icon-rss-feed"></i></div>
-                          <div class="title">
-                            <h5>Lorem ipsum dolor sit amet.</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed.</p>
-                          </div>
-                        </div>
-                        <div class="date text-right"><strong>24</strong><span>May</span></div>
-                      </div>
-                      <!-- Item-->
-                      <div class="item d-flex justify-content-between">
-                        <div class="info d-flex">
-                          <div class="icon"><i class="icon-rss-feed"></i></div>
-                          <div class="title">
-                            <h5>Lorem ipsum dolor sit amet.</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed.</p>
-                          </div>
-                        </div>
-                        <div class="date text-right"><strong>24</strong><span>May</span></div>
-                      </div>
-                      <!-- Item-->
-                      <div class="item d-flex justify-content-between">
-                        <div class="info d-flex">
-                          <div class="icon"><i class="icon-rss-feed"></i></div>
-                          <div class="title">
-                            <h5>Lorem ipsum dolor sit amet.</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed.</p>
-                          </div>
-                        </div>
-                        <div class="date text-right"><strong>24</strong><span>May</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Daily Feeds -->
-                <div class="col-lg-4">
-                  <div class="daily-feeds card"> 
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard7" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard7" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-header">
-                      <h3 class="h4">Daily Feeds</h3>
-                    </div>
-                    <div class="card-body no-padding">
-                      <!-- Item-->
-                      <div class="item">
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="img/avatar-5.jpg" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content">
-                              <h5>Aria Smith</h5><span>Posted a new blog </span>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                            </div>
-                          </div>
-                          <div class="date text-right"><small>5min ago</small></div>
-                        </div>
-                      </div>
-                      <!-- Item-->
-                      <div class="item"> 
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="img/avatar-2.jpg" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content">
-                              <h5>Frank Williams</h5><span>Posted a new blog </span>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                              <div class="CTAs"><a href="#" class="btn btn-xs btn-secondary"><i class="fa fa-thumbs-up"> </i>Like</a><a href="#" class="btn btn-xs btn-secondary"><i class="fa fa-heart"> </i>Love    </a></div>
-                            </div>
-                          </div>
-                          <div class="date text-right"><small>5min ago</small></div>
-                        </div>
-                      </div>
-                      <!-- Item-->
-                      <div class="item clearfix">
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="img/avatar-3.jpg" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content">
-                              <h5>Ashley Wood</h5><span>Posted a new blog </span>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                            </div>
-                          </div>
-                          <div class="date text-right"><small>5min ago</small></div>
-                        </div>
-                        <div class="quote has-shadow"> <small>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Over the years.</small></div>
-                        <div class="CTAs pull-right"><a href="#" class="btn btn-xs btn-secondary"><i class="fa fa-thumbs-up"> </i>Like</a></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Recent Activities -->
-                <div class="col-lg-4">
-                  <div class="recent-activities card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard8" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard8" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
-                    <div class="card-header">
-                      <h3 class="h4">Recent Activities</h3>
-                    </div>
-                    <div class="card-body no-padding">
-                      <div class="item">
-                        <div class="row">
-                          <div class="col-4 date-holder text-right">
-                            <div class="icon"><i class="icon-clock"></i></div>
-                            <div class="date"> <span>6:00 am</span><br><span class="text-info">6 hours ago</span></div>
-                          </div>
-                          <div class="col-8 content">
-                            <h5>Meeting</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="item">
-                        <div class="row">
-                          <div class="col-4 date-holder text-right">
-                            <div class="icon"><i class="icon-clock"></i></div>
-                            <div class="date"> <span>6:00 am</span><br><span class="text-info">6 hours ago</span></div>
-                          </div>
-                          <div class="col-8 content">
-                            <h5>Meeting</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="item">
-                        <div class="row">
-                          <div class="col-4 date-holder text-right">
-                            <div class="icon"><i class="icon-clock"></i></div>
-                            <div class="date"> <span>6:00 am</span><br><span class="text-info">6 hours ago</span></div>
-                          </div>
-                          <div class="col-8 content">
-                            <h5>Meeting</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.</p>
-                          </div>
+ 
+             <!-- Project accordeon-->
+            <section>
+             <div class="container-fluid">
+                 <div class="accordion" id="accordionExample">
+                    
+                    <div class="card">
+                          <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                              <div class="project">
+
+                              <div class="d-flex align-items-left justify-content-between">
+                                <div class="project-title d-flex align-text-left">
+                                  <div class="image has-shadow"><img src="https://urba.org.ar/wp-content/uploads/2019/02/Daom.png" alt="..." class="img-fluid"></div>
+                                   <div class="text">
+                                    <h1 class="h1">Areco Rugby</h1><small >Local - Fecha 2</small>
+                                   </div>
+                                 </div>
+                                 <div class="d-flex align-items-center justify-content-between" ><span class="hidden-sm-down "><h1 class="text-success">26-19</h1></span></div>
+
+                               </div>
+                              </div>
+
+                          </button>
+                      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div class="card-body">
+                                <div class="container-fluid"><h1>Repetición del partido</h1>
+                                  <div class="iframe-container">
+                                     <iframe width="80%" src="https://www.youtube.com/embed/tOvkKTqgeFo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                   </div>
+                                </div>  
+                                <div class="container-fluid my-3" >
+                                    <button class="btn-primary rounded" width="90%">Link a photos</button>
+                                </div>
+                                    <div class="container-fluid">
+                                      <div class="row rounded">
+                                          <div class="col-lg">
+                                              <div class="card rounded">
+                                                  <div class="card-header d-flex align-items-center rounded">
+                                                      <h3 class="h4">Equipo</h3>
+                                                    </div>
+                                                <div class="card-body">
+                                                  <div class="table-responsive">
+                                                    <table class="table table-hover" id="posiciones_table">
+                                                      <thead class="thead-light">
+                                                        <tr>
+                                                          <th>Pos</th>
+                                                          <th>Jugador</th>   
+                                                          <th>Tries</th>   
+                                                          <th>Tackles</th>    
+                                                          <th>Pases</th>  
+                                                          <th>Figura</th>      
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody class="align-items-center">
+                                                        <tr>
+                                                          <td>1</td>
+                                                          <td>Juanse</td>
+                                                          <td>1</td>
+                                                          <td>10</td>
+                                                          <td>10</td>
+                                                          <td>
+                                                            <img src="http://iconshow.me/media/images/Mixed/small-n-flat-icon/png/256/star.png" alt="..."  height="10%">
+                                                          </td>
+                                                         </tr>
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                      </div>
+                        
+                                    </div>
+
+
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </section>
+
+
+            </section>
+
+
+           <!-- Resultados URBA-->
+
+            <section>
+                <div class="container-fluid"><h1>Resultados</h1>
+                  <div class="iframe-container">
+                     <iframe width="80%" height="100%" src="https://urba.org.ar/primera-c-superior-fixture-y-resultados" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                   </div>
+                </div>
+    
+              </section>
+
+
+
           <!-- Page Footer-->
           <footer class="main-footer">
             <div class="container-fluid">
